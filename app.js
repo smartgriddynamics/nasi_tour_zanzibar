@@ -120,6 +120,8 @@ const tours = [
 
 const imageUrl = (id, width = 900) =>
   `https://images.unsplash.com/${id}?auto=format&fit=crop&w=${width}&q=82`;
+const imageSrcSet = (id, widths = [360, 540, 750]) =>
+  widths.map((width) => `${imageUrl(id, width)} ${width}w`).join(", ");
 const encode = (value) => encodeURIComponent(value);
 const byName = (name) => tours.find((tour) => tour.title === name);
 const toast = document.querySelector("#toast");
@@ -147,8 +149,8 @@ function renderTours(filter = "All Experiences") {
     : tours.filter((tour) => tour.category === filter);
   grid.innerHTML = selectedTours.map((tour, index) => `
     <article class="tour-card" style="animation-delay:${Math.min(index * 35, 245)}ms">
-      <button class="tour-photo" type="button" data-tour="${tour.title}" aria-label="View ${tour.title} details">
-        <img src="${imageUrl(tour.image, 750)}" alt="${tour.alt}" loading="lazy">
+      <button class="tour-photo image-loading" type="button" data-tour="${tour.title}" aria-label="View ${tour.title} details">
+        <img src="${imageUrl(tour.image, 540)}" srcset="${imageSrcSet(tour.image)}" sizes="(max-width: 600px) calc(100vw - 44px), (max-width: 820px) calc(45vw - 30px), (max-width: 1120px) 30vw, 22vw" alt="${tour.alt}" loading="lazy" decoding="async">
         <span class="tour-category">${tour.tag}</span>
       </button>
       <div class="tour-card-body">
@@ -161,6 +163,8 @@ function renderTours(filter = "All Experiences") {
       </div>
     </article>
   `).join("");
+  grid.setAttribute("aria-busy", "false");
+  setupImageLoading(grid);
   renderIcons();
 }
 
@@ -190,6 +194,28 @@ function openTour(name) {
 
 function renderIcons() {
   if (window.lucide) window.lucide.createIcons();
+}
+
+function setupImageLoading(root = document) {
+  root.querySelectorAll(".image-loading img").forEach((image) => {
+    const container = image.closest(".image-loading");
+    if (container.dataset.loading === "true") return;
+    container.dataset.loading = "true";
+    container.setAttribute("aria-busy", "true");
+    const finish = (failed = false) => {
+      container.classList.remove("image-loading");
+      container.classList.toggle("image-failed", failed);
+      container.classList.toggle("image-loaded", !failed);
+      container.setAttribute("aria-busy", "false");
+    };
+
+    if (image.complete) {
+      finish(image.naturalWidth === 0);
+    } else {
+      image.addEventListener("load", () => finish(), { once: true });
+      image.addEventListener("error", () => finish(true), { once: true });
+    }
+  });
 }
 
 function showGallerySlide(index) {
@@ -421,7 +447,8 @@ const today = new Date();
 const localToday = new Date(today.getTime() - today.getTimezoneOffset() * 60000).toISOString().slice(0, 10);
 dateInputs.forEach((input) => { input.min = localToday; });
 
-renderTours();
 renderPlannerChoices();
+setupImageLoading();
+renderTours();
 renderIcons();
 setupVideoCrossfade();
