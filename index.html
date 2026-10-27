@@ -34,6 +34,17 @@
   <link rel="preconnect" href="https://unpkg.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Alex+Brush&family=Cormorant+Garamond:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
+  <script>
+    window.googleTranslateElementInit = function () {
+      new google.translate.TranslateElement({
+        pageLanguage: "en",
+        includedLanguages: "sw,fr,de,it,es,ar,nl,pt,ru,pl",
+        autoDisplay: false
+      }, "google_translate_element");
+      document.dispatchEvent(new Event("site-translate-ready"));
+    };
+  </script>
+  <script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit" async onerror="document.dispatchEvent(new Event('site-translate-error'))"></script>
   <script src="https://unpkg.com/lucide@latest" defer></script>
   <script src="app.js" defer></script>
 </head>
@@ -50,9 +61,27 @@
     <nav class="primary-nav" id="primary-nav" aria-label="Main navigation">
       <a href="#home">Home</a><a href="#about">About Us</a><a href="#excursions">Excursions</a>
       <a href="#safari">Safari</a><a href="#transfers">Airport Transfers</a><a href="#gallery">Gallery</a><a href="#contact">Contact</a>
+      <label class="language-switcher">
+        <i data-lucide="languages" aria-hidden="true"></i>
+        <span class="sr-only">Choose website language</span>
+        <select id="language-select" aria-label="Choose website language" disabled>
+          <option value="en">English</option>
+          <option value="sw">Kiswahili</option>
+          <option value="fr">Français</option>
+          <option value="de">Deutsch</option>
+          <option value="it">Italiano</option>
+          <option value="es">Español</option>
+          <option value="ar">العربية</option>
+          <option value="nl">Nederlands</option>
+          <option value="pt">Português</option>
+          <option value="ru">Русский</option>
+          <option value="pl">Polski</option>
+        </select>
+      </label>
       <a class="nav-cta" href="#planner">Plan Your Trip <i data-lucide="arrow-up-right"></i></a>
     </nav>
   </header>
+  <div id="google_translate_element" aria-hidden="true"></div>
 
   <main id="main">
     <section class="hero" id="home" aria-label="Welcome to Zanzibar">

@@ -23,7 +23,7 @@ const tours = [
   {
     title: "Blue Safari", category: "Ocean Adventures", tag: "OCEAN ADVENTURE",
     description: "Explore Zanzibar's waters aboard a traditional dhow. Visit sandbanks, lagoons, and coral reefs. Snorkelling and a local-specialities lunch are included.",
-    image: "photo-1544551763-46a013bb70d5", imageFile: "excursion-blue-safari.jpg", alt: "Boat sailing across tropical water",
+    image: "photo-1544551763-46a013bb70d5", imageFile: "excursion-blue-safari.jpg", imagePosition: "center top", alt: "Boat sailing across tropical water",
     highlights: ["Traditional dhow", "Sandbanks & lagoons", "Snorkelling and lunch included"]
   },
   {
@@ -35,13 +35,13 @@ const tours = [
   {
     title: "Jozani Forest", category: "Nature & Wildlife", tag: "FOREST & WILDLIFE",
     description: "Explore lush forest and mangroves while discovering Zanzibar's rare red colobus monkeys.",
-    image: "photo-1448375240586-882707db888b", imageFile: "excursion-jozani-forest.jpg", alt: "Sunlight through a lush forest",
+    image: "photo-1448375240586-882707db888b", imageFile: "excursion-jozani-forest.jpg", imagePosition: "center top", alt: "Sunlight through a lush forest",
     highlights: ["Forest trails", "Mangroves", "Red colobus monkeys"]
   },
   {
     title: "Salaam Cave — Sea Turtles", category: "Nature & Wildlife", tag: "MARINE LIFE",
     description: "Discover Salaam Cave and see sea turtles up close. Swimming with turtles depends on local permission and conditions.",
-    image: "photo-1546026423-cc4642628d2b", imageFile: "excursion-salaam-cave.jpg", alt: "Tropical marine life and coral reef",
+    image: "photo-1546026423-cc4642628d2b", imageFile: "excursion-salaam-cave.jpg", imagePosition: "center top", alt: "Tropical marine life and coral reef",
     highlights: ["Sea turtles", "Natural cave", "Swimming subject to permission and conditions"]
   },
   {
@@ -77,7 +77,7 @@ const tours = [
   {
     title: "Zakir Wildlife Park", category: "Nature & Wildlife", tag: "WILDLIFE ENCOUNTER",
     description: "Discover animals including giraffes and zebras at Zakir Wildlife Sanctuary.",
-    image: "photo-1516426122078-c23e76319801", imageFile: "excursion-zakir-wildlife-park.jpg", alt: "Wildlife in a natural habitat",
+    image: "photo-1516426122078-c23e76319801", imageFile: "excursion-zakir-wildlife-park.jpg", imagePosition: "center top", alt: "Wildlife in a natural habitat",
     highlights: ["Zakir Wildlife Sanctuary", "Giraffes", "Zebras"]
   },
   {
@@ -149,7 +149,7 @@ function renderTours(filter = "All Experiences") {
   grid.innerHTML = selectedTours.map((tour, index) => `
     <article class="tour-card" style="animation-delay:${Math.min(index * 35, 245)}ms">
       <button class="tour-photo image-loading" type="button" data-tour="${tour.title}" aria-label="View ${tour.title} details">
-        <img src="${localImageUrl(tour.imageFile)}" data-fallback="${imageUrl(tour.image, 750)}" sizes="(max-width: 600px) calc(100vw - 44px), (max-width: 820px) calc(45vw - 30px), (max-width: 1120px) 30vw, 22vw" alt="${tour.alt}" loading="lazy" decoding="async">
+        <img src="${localImageUrl(tour.imageFile)}" data-fallback="${imageUrl(tour.image, 750)}" style="object-position: ${tour.imagePosition || "center"}" sizes="(max-width: 600px) calc(100vw - 44px), (max-width: 820px) calc(45vw - 30px), (max-width: 1120px) 30vw, 22vw" alt="${tour.alt}" loading="lazy" decoding="async">
         <span class="tour-category">${tour.tag}</span>
       </button>
       <div class="tour-card-body">
@@ -384,6 +384,49 @@ nav.querySelectorAll("a").forEach((link) => {
     renderIcons();
   });
 });
+
+const languageSelect = document.querySelector("#language-select");
+let translationReady = false;
+
+function syncLanguageSelect() {
+  const translateSelect = document.querySelector(".goog-te-combo");
+  if (!translateSelect) return;
+  translationReady = true;
+  languageSelect.disabled = false;
+  const cookie = document.cookie.match(/(?:^|;\s*)googtrans=\/en\/([a-z-]+)/);
+  const activeLanguage = cookie ? cookie[1] : "en";
+  if ([...languageSelect.options].some((option) => option.value === activeLanguage)) {
+    languageSelect.value = activeLanguage;
+    document.documentElement.lang = activeLanguage;
+    document.documentElement.dir = activeLanguage === "ar" ? "rtl" : "ltr";
+  }
+}
+
+document.addEventListener("site-translate-ready", syncLanguageSelect);
+document.addEventListener("site-translate-error", () => {
+  languageSelect.disabled = true;
+  languageSelect.title = "Language translation is unavailable right now.";
+  showToast("Language options couldn't load. Check your internet connection and refresh to try again.");
+});
+languageSelect.addEventListener("change", () => {
+  const translateSelect = document.querySelector(".goog-te-combo");
+  if (!translateSelect) {
+    showToast("Language translation is still loading. Please try again in a moment.");
+    return;
+  }
+  const selectedLanguage = languageSelect.value;
+  translateSelect.value = selectedLanguage === "en" ? "" : selectedLanguage;
+  translateSelect.dispatchEvent(new Event("change", { bubbles: true }));
+  document.documentElement.lang = selectedLanguage;
+  document.documentElement.dir = selectedLanguage === "ar" ? "rtl" : "ltr";
+});
+if (document.querySelector(".goog-te-combo")) syncLanguageSelect();
+window.setTimeout(() => {
+  if (!translationReady) {
+    languageSelect.disabled = true;
+    languageSelect.title = "Language translation could not be loaded.";
+  }
+}, 12000);
 
 const header = document.querySelector(".site-header");
 const updateHeader = () => header.classList.toggle("is-scrolled", window.scrollY > 40);
