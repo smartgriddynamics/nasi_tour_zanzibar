@@ -273,6 +273,7 @@ a.contact-item:hover { background: #fff; }
 .footer-bottom { display: flex; min-height: 60px; align-items: center; justify-content: space-between; gap: 15px; border-top: 1px solid rgb(255 255 255 / 14%); color: #8398a0; font-size: 7px; letter-spacing: .13em; }
 .footer-bottom svg { width: 11px; height: 11px; color: var(--gold); vertical-align: middle; }
 .footer-bottom a { color: var(--gold); }
+.footer-bottom .designer-credit b { color: var(--gold); font-weight: 700; letter-spacing: .2em; }
 .floating-whatsapp { position: fixed; z-index: 15; right: 24px; bottom: 23px; display: grid; width: 53px; height: 53px; place-items: center; border: 1px solid rgb(255 255 255 / 68%); border-radius: 50%; color: var(--white); background: #087f8c; box-shadow: 0 8px 24px rgb(9 44 66 / 25%); transition: transform .2s, background .2s; }
 .floating-whatsapp:hover { transform: translateY(-3px); background: #05646d; }
 .floating-whatsapp svg { width: 23px; height: 23px; }
@@ -309,7 +310,7 @@ a.contact-item:hover { background: #fff; }
 .lightbox-nav svg { width: 19px; height: 19px; }
 .lightbox-prev { left: 16px; }
 .lightbox-next { right: 16px; }
-.film-modal { display: grid; min-height: 450px; place-items: center; overflow: hidden; color: white; background: linear-gradient(130deg, rgb(9 44 66 / 95%), rgb(8 127 140 / 85%)), url("https://images.unsplash.com/photo-1500375592092-40eb2168fd21?auto=format&fit=crop&w=1400&q=85") center/cover; text-align: center; }
+.film-modal { display: grid; min-height: 450px; place-items: center; overflow: hidden; color: white; background: linear-gradient(130deg, #092c42, #087f8c); text-align: center; }
 .film-modal[open] { display: grid; }
 .film-content { max-width: 540px; padding: 55px 25px; }
 .film-content > svg { width: 42px; height: 42px; margin-bottom: 22px; color: var(--gold); stroke-width: 1; }
